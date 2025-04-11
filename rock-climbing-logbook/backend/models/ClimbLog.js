@@ -1,13 +1,20 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the Climb Log
-const ClimbLogSchema = new mongoose.Schema({
-  date: { type: String, required: true },
-  location: { type: String, required: true },
-  difficulty: { type: String, required: true },
-  notes: { type: String },
+const MediaSchema = new mongoose.Schema({
+  type: String, // "image" or "video"
+  url: String,
+  uploadedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-// Create and export the model
-const ClimbLog = mongoose.model('ClimbLog', ClimbLogSchema);
-module.exports = ClimbLog;
+const ClimbLogSchema = new mongoose.Schema({
+  date: String,
+  location: String,
+  difficulty: String,
+  notes: String,
+  media: [MediaSchema],
+});
+
+module.exports = mongoose.model('ClimbLog', ClimbLogSchema);
