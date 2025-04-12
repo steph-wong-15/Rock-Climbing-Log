@@ -1,112 +1,119 @@
-/* src/index.css */
+/* Global Styles for App */
+
+/* Body */
 body {
+  background-color: #F1F8E9; /* Light green background */
+  color: #388E3C; /* Secondary Green */
   font-family: 'Roboto', sans-serif;
-  background-color: #f4f4f4;
-  color: #333;
   margin: 0;
   padding: 0;
 }
 
-.App {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* Links */
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-header {
-  text-align: center;
-  background-color: #8eac50; /* Earthy Green */
-  padding: 20px;
-  border-radius: 8px;
-  color: white;
+a:hover {
+  text-decoration: underline;
 }
 
-h1 {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-h2 {
-  font-size: 1.5em;
-  margin-bottom: 10px;
-  color: #4a7023; /* Dark Green */
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-input, textarea {
-  padding: 10px;
-  font-size: 1em;
-  border-radius: 5px;
-  border: 1px solid #8eac50; /* Green border */
-  background-color: #fff;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
+/* Buttons */
 button {
-  padding: 10px;
-  background-color: #4caf50; /* Earthy Green */
+  background-color: #4CAF50; /* Fresh green */
   color: white;
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
+  font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #388E3C; /* Darker green on hover */
 }
 
-.error-message {
-  color: red;
+/* Section container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.climb-list-container {
-  margin-top: 30px;
+h1, h2 {
+  color: #0288D1;  /* Deep Blue */
 }
 
-.climb-item {
-  background-color: #e8f5e9; /* Light Green */
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+p {
+  color: #388E3C; /* Secondary green */
 }
 
-.climb-item h3 {
+/* Footer */
+footer {
+  background-color: #388E3C;  /* Dark Green */
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(45deg, #4CAF50, #29B6F6); /* Green and Blue gradient */
+  padding: 10px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar-brand h1 {
   margin: 0;
-  font-size: 1.2em;
-  color: #388e3c; /* Dark Green */
+  font-size: 28px;
+  color: #FFEB3B; /* Accent Yellow */
 }
 
-.climb-item p {
-  margin: 5px 0;
-  color: #6d6d6d; /* Greyish color */
-}
-
-ul {
-  list-style-type: none;
+.navbar-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
   padding: 0;
 }
 
-ul li {
-  background-color: #c8e6c9; /* Very light green background for list items */
-  border-radius: 5px;
-  padding: 15px;
-  margin-bottom: 15px;
+.navbar-links li {
+  margin: 0 15px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #FFEB3B; /* Accent Yellow on hover */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-links {
+    width: 100%;
+    display: block;
+    text-align: left;
+  }
+
+  .navbar-links li {
+    margin: 10px 0;
+  }
 }
