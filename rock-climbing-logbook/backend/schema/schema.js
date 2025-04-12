@@ -43,6 +43,31 @@ const RootQuery = new GraphQLObjectType({
         return ClimbLog.findById(args.id);  // Find a climb log by ID
       },
     },
+
+    totalClimbs: {
+      type: GraphQLString,
+      async resolve() {
+        const count = await ClimbLog.countDocuments();
+        return count.toString(); 
+      },
+    },
+
+    climbsThisMonth: {
+      type: GraphQLString,
+      async resolve() {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        
+        const count = await ClimbLog.countDocuments({
+          date: {
+            $gte: startOfMonth,
+            $lt: startOfNextMonth,
+          },
+        });
+        return count.toString();
+      },
+    },
   },
 });
 
@@ -69,7 +94,7 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         const newClimbLog = new ClimbLog({
-          date: args.date,
+          date: new Date(args.date),
           location: args.location,
           difficulty: args.difficulty,
           notes: args.notes,

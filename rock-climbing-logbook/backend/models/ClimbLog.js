@@ -10,7 +10,7 @@ const MediaSchema = new mongoose.Schema({
 });
 
 const ClimbLogSchema = new mongoose.Schema({
-  date: String,
+  date: Date,
   location: String,
   difficulty: String,
   notes: String,

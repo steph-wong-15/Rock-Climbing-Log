@@ -4,6 +4,7 @@ import ApolloProvider from './ApolloProvider';
 import Home from './pages/Home';
 import ClimbLogForm from './components/ClimbLogForm';
 import ClimbLogList from './components/ClimbLogList';
+import Analytics from './components/Analytics'; 
 import Navbar from './components/NavBar'; 
 
 import './App.css'; 
@@ -20,6 +21,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/create" element={<ClimbLogForm />} />
               <Route path="/logs" element={<ClimbLogList />} />
+              <Route path="/analytics" element={<Analytics />} />
             </Routes>
           </div>
         </div>
