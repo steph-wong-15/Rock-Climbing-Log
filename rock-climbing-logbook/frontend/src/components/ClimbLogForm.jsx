@@ -2,20 +2,31 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 
-// GraphQL mutations
 const ADD_CLIMB_LOG = gql`
   mutation AddClimbLog(
     $date: String!,
     $location: String!,
+    $typeOfClimb: String!,
     $difficulty: String!,
+    $attempts: Int!,
     $notes: String!,
     $media: [MediaInput]
   ) {
-    addClimbLog(date: $date, location: $location, difficulty: $difficulty, notes: $notes, media: $media) {
+    addClimbLog(
+      date: $date,
+      location: $location,
+      typeOfClimb: $typeOfClimb,
+      difficulty: $difficulty,
+      attempts: $attempts,
+      notes: $notes,
+      media: $media
+    ) {
       id
       date
       location
+      typeOfClimb
       difficulty
+      attempts
       notes
       media {
         type
@@ -34,12 +45,12 @@ const GENERATE_S3_UPLOAD_URL = gql`
 const ClimbForm = () => {
   const [date, setDate] = useState('');
   const [location, setLocation] = useState('');
+  const [typeOfClimb, setTypeOfClimb] = useState('');
   const [difficulty, setDifficulty] = useState('');
+  const [attempts, setAttempts] = useState(1);
   const [notes, setNotes] = useState('');
   const [file, setFile] = useState(null);
-  const [fileUrl, setFileUrl] = useState('');
 
-  // Apollo hooks for mutations
   const [addClimbLog, { loading, error }] = useMutation(ADD_CLIMB_LOG);
   const [generateS3UploadUrl] = useMutation(GENERATE_S3_UPLOAD_URL);
 
@@ -50,7 +61,6 @@ const ClimbForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Step 1: Generate signed URL for the file upload
     let mediaUrl = '';
     if (file) {
       const { data } = await generateS3UploadUrl({
@@ -58,103 +68,121 @@ const ClimbForm = () => {
       });
 
       const signedUrl = data.generateS3UploadUrl;
-      console.log('Signed URL:', signedUrl);
 
-      // Step 2: Upload the file to S3 using the signed URL
       await fetch(signedUrl, {
         method: 'PUT',
-        headers: {
-          'Content-Type': file.type,
-        },
+        headers: { 'Content-Type': file.type },
         body: file,
       });
 
-      // Step 3: Store the public URL of the uploaded file
-      mediaUrl = signedUrl.split('?')[0]; // Get the URL without the query params
+      mediaUrl = signedUrl.split('?')[0];
     }
 
-    // Step 4: Call the mutation to add the climb log with media URL
     try {
       await addClimbLog({
         variables: {
           date,
           location,
+          typeOfClimb,
           difficulty,
+          attempts: parseInt(attempts),
           notes,
           media: mediaUrl
             ? [{ type: file.type.startsWith('video') ? 'video' : 'image', url: mediaUrl }]
             : [],
         },
       });
+
+      // Reset form
       setDate('');
       setLocation('');
+      setTypeOfClimb('');
       setDifficulty('');
+      setAttempts(1);
       setNotes('');
       setFile(null);
-      setFileUrl('');
     } catch (err) {
       console.error('Error adding climb log:', err);
     }
   };
 
+  const boulderingGrades = ['V0', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10'];
+  const ropeGrades = [
+    '5.6', '5.7', '5.8', '5.9',
+    '5.10a', '5.10b', '5.10c', '5.10d',
+    '5.11a', '5.11b', '5.11c', '5.11d',
+    '5.12a', '5.12b', '5.12c', '5.12d',
+  ];
+
   return (
     <div className="form-container">
       <h2>Log a New Climb</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="date">Date:</label>
-          <input
-            type="date"
-            id="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
+
+      <form onSubmit={handleSubmit} className="climb-form">
+        <div className="form-group">
+          <label>Date:</label>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
         </div>
-        <div>
-          <label htmlFor="location">Location:</label>
-          <input
-            type="text"
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            required
-          />
+
+        <div className="form-group">
+          <label>Location:</label>
+          <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
         </div>
-        <div>
-          <label htmlFor="difficulty">Difficulty:</label>
-          <input
-            type="text"
-            id="difficulty"
+
+        <div className="form-group">
+          <label>Type of Climb:</label>
+          <select value={typeOfClimb} onChange={(e) => {
+            setTypeOfClimb(e.target.value);
+            setDifficulty('');
+          }} required>
+            <option value="">Select type</option>
+            <option value="Bouldering">Bouldering</option>
+            <option value="Top Rope">Top Rope</option>
+            <option value="Lead">Lead</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label>Difficulty:</label>
+          <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
             required
-          />
-        </div>
-        <div>
-          <label htmlFor="notes">Notes:</label>
-          <textarea
-            id="notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
+            disabled={!typeOfClimb}
+          >
+            <option value="">Select difficulty</option>
+            {(typeOfClimb === 'Bouldering' ? boulderingGrades : ropeGrades).map((d) => (
+              <option key={d} value={d}>{d}</option>
+            ))}
+          </select>
         </div>
 
-        {/* File upload input */}
-        <div>
-          <label htmlFor="file">Upload Image/Video:</label>
-          <input
-            type="file"
-            id="file"
-            accept="image/*,video/*"
-            onChange={handleFileChange}
-          />  
-        {file && <img src={URL.createObjectURL(file)} alt="preview" width={100} height={100} />}
-</div>
+        <div className="form-group">
+          <label>Number of Attempts:</label>
+          <input type="number" value={attempts} min="1" onChange={(e) => setAttempts(e.target.value)} required />
+        </div>
+
+        <div className="form-group">
+          <label>Notes:</label>
+          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+        </div>
+
+        <div className="form-group">
+          <label>Upload Image/Video:</label>
+          <input type="file" accept="image/*,video/*" onChange={handleFileChange} />
+          {file && file.type.startsWith('image') && (
+            <img
+              src={URL.createObjectURL(file)}
+              alt="preview"
+              style={{ width: '120px', marginTop: '10px' }}
+            />
+          )}
+        </div>
 
         <button type="submit" disabled={loading}>
           {loading ? 'Submitting...' : 'Log Climb'}
         </button>
+
         {error && <p className="error-message">Error: {error.message}</p>}
       </form>
     </div>

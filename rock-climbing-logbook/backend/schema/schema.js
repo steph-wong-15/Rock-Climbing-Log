@@ -1,4 +1,4 @@
-const { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLInputObjectType } = require('graphql');
+const { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLInputObjectType, GraphQLInt } = require('graphql');
 const ClimbLog = require('../models/ClimbLog');  // ClimbLog model
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
@@ -18,9 +18,21 @@ const ClimbLogType = new GraphQLObjectType({
   name: 'ClimbLog',
   fields: () => ({
     id: { type: GraphQLString },
-    date: { type: GraphQLString },
+    date: {
+      type: GraphQLString,
+      resolve(parent) {
+        const date = new Date(parent.date); // Convert Unix timestamp to Date object
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+      },
+    },    
     location: { type: GraphQLString },
+    typeOfClimb: { type: GraphQLString },
     difficulty: { type: GraphQLString },
+    attempts: { type: GraphQLInt },
     notes: { type: GraphQLString },
     media: { type: new GraphQLList(MediaType) }, // 👈 Add this
   }),
@@ -36,6 +48,7 @@ const RootQuery = new GraphQLObjectType({
         return ClimbLog.find();  // Fetch all climb logs
       },
     },
+
     climbLog: {
       type: ClimbLogType,
       args: { id: { type: GraphQLString } },
@@ -88,7 +101,9 @@ const Mutation = new GraphQLObjectType({
       args: {
         date: { type: GraphQLString },
         location: { type: GraphQLString },
+        typeOfClimb: { type: GraphQLString },
         difficulty: { type: GraphQLString },
+        attempts: { type: GraphQLInt },
         notes: { type: GraphQLString },
         media: { type: new GraphQLList(MediaInputType) },
       },
@@ -96,7 +111,9 @@ const Mutation = new GraphQLObjectType({
         const newClimbLog = new ClimbLog({
           date: new Date(args.date),
           location: args.location,
+          typeOfClimb: args.typeOfClimb,
           difficulty: args.difficulty,
+          attempts: args.attempts,
           notes: args.notes,
           media: args.media || [],
         });

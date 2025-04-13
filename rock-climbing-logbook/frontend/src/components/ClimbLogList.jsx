@@ -8,7 +8,9 @@ const GET_CLIMB_LOGS = gql`
       id
       date
       location
+      typeOfClimb
       difficulty
+      attempts
       notes
       media {
         type
@@ -37,20 +39,22 @@ const ClimbList = () => {
       <h2>Climb Logs</h2>
       <ul>
         {data.climbLogs.map((climb) => (
-          <li key={climb.id} className="climb-item">
+          <li key={climb.id} className="climb-item" style={{ borderBottom: '1px solid #ccc', padding: '1rem 0' }}>
             <h3>{climb.location}</h3>
-            <p>Date: {climb.date}</p>
-            <p>Difficulty: {climb.difficulty}</p>
-            <p>Notes: {climb.notes}</p>
+            <p><strong>Date:</strong> {climb.date}</p>
+            <p><strong>Type of Climb:</strong> {climb.typeOfClimb}</p>
+            <p><strong>Difficulty:</strong> {climb.difficulty}</p>
+            <p><strong>Attempts:</strong> {climb.attempts}</p>
+            <p><strong>Notes:</strong> {climb.notes}</p>
 
             {climb.media.length > 0 && (
-              <button onClick={() => toggleMedia(climb.id)}>
+              <button onClick={() => toggleMedia(climb.id)} style={{ marginTop: '0.5rem' }}>
                 {expandedLogs[climb.id] ? 'Hide Media' : 'Show Media'}
               </button>
             )}
 
             {expandedLogs[climb.id] && (
-              <div className="media-section">
+              <div className="media-section" style={{ marginTop: '1rem' }}>
                 {climb.media.map((item, index) => {
                   if (item.type.startsWith('image')) {
                     return (
