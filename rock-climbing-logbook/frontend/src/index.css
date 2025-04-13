@@ -70,12 +70,12 @@ footer {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
 }
 
 label {
   font-weight: 600;
   margin-bottom: 0.5rem;
+  text-align: left;
 }
 
 input,
@@ -90,6 +90,13 @@ textarea {
 textarea {
   min-height: 100px;
   resize: vertical;
+}
+
+ul {
+  list-style-type: none;   
+  padding-left: 5;         
+  margin-left: 0;
+  text-align: left;        
 }
 
 /* Navbar Styles */
@@ -160,6 +167,27 @@ textarea {
   color: #0288D1; /* Blue */
   font-size: 24px;
   font-weight: bold;
+}
+
+.analytics-dashboard {
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.chart-container {
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+canvas {
+  width: 100%;
+  height: 400px;
 }
 
 /* Mobile responsiveness */

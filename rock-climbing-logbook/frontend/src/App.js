@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ApolloProvider from './ApolloProvider';
-import Home from './pages/Home';
+import Home from './components/Home';
 import ClimbLogForm from './components/ClimbLogForm';
 import ClimbLogList from './components/ClimbLogList';
-import Analytics from './components/Analytics'; 
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 import Navbar from './components/NavBar'; 
 
 import './App.css'; 
@@ -21,7 +21,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/create" element={<ClimbLogForm />} />
               <Route path="/logs" element={<ClimbLogList />} />
-              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/analytics" element={<AnalyticsDashboard />} />
             </Routes>
           </div>
         </div>

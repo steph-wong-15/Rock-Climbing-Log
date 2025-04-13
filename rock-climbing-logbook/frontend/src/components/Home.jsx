@@ -1,5 +1,5 @@
 import React from 'react';
-import Mascot from '../components/Mascot';
+import Mascot from './Mascot';
 
 const Home = () => (
   <div>
